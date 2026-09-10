@@ -4,7 +4,7 @@ Landing de tarjetas de crédito que muestra dos variantes del banner principal,
 registra las interacciones en `window.dataLayer` y las envía a GA4 mediante
 Google Tag Manager.
 
-**Demo:** https://USUARIO.github.io/REPO/
+**Demo:** https://cristoferm-a.github.io/PruebaTecnica---Neo/
 
 > Proyecto de demostración con fines de evaluación técnica. No está afiliado al
 > Banco de Crédito del Perú.
