@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const REPO_NAME = 'bcp-landing-ab-experiment'
+const REPO_NAME = 'PruebaTecnica---Neo'
 
 export default defineConfig(({ command }) => ({
   base: command === 'build' ? `/${REPO_NAME}/` : '/',
