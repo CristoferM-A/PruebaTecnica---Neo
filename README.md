@@ -94,7 +94,7 @@ experiencia y contamina la medición.
 
 ### Captura del código
 
-> `![Captura del evento GTM](captura-evento-gtm.png)`
+![Captura del evento GTM](captura-evento-gtm.png)
 
 Archivo: [`src/tracking/dataLayer.ts`](src/tracking/dataLayer.ts)
 
