@@ -1,0 +1,52 @@
+/* Estilos desktop */
+
+:root {
+  --azul: #002a8d;
+  --azul-oscuro: #002473;
+  --azul-brillante: #0a47f0;
+  --azul-cintillo: #0030b3;
+  --magenta-cintillo: #d3017f;
+  --naranja: #ff7800;
+  --naranja-claro: #ff961f;
+  --verde-whatsapp: #37a500;
+
+  --tinta: #202e44;
+  --texto: #4d5b70;
+  --texto-suave: #606c7f;
+  --gris-icono: #868f9e;
+  --borde: #acb2bd;
+  --linea: #d2d5dc;
+  --fondo-suave: #ebf4ff;
+  --fondo-banner: #d9ebff;
+  --blanco: #ffffff;
+  --error: #d0021b;
+  --exito: #1a8a3f;
+
+  --fuente-texto: 'Flexo', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --fuente-titulo: 'Flexo-Demi', 'Flexo', 'Segoe UI', system-ui, sans-serif;
+
+  --ancho-maximo: 1200px;
+  --padding-contenedor: 24px;
+  --radio-boton: 24px;
+  --radio-caja: 12px;
+  --transicion: 0.2s ease;
+  --sombra-boton:
+    0 2px 2px rgba(82, 112, 148, 0.14),
+    0 3px 1px rgba(82, 112, 148, 0.12),
+    0 1px 5px rgba(82, 112, 148, 0.2);
+
+  --banner-fondo: var(--azul);
+  --banner-texto: var(--blanco);
+  --banner-texto-suave: rgba(255, 255, 255, 0.85);
+  --banner-cta-fondo: var(--naranja);
+  --banner-cta-texto: var(--blanco);
+  --banner-cta-fondo-hover: var(--naranja-claro);
+  --banner-decoracion: rgba(255, 255, 255, 0.12);
+}
+
+[data-variante='B'] {
+  --banner-fondo: var(--naranja);
+  --banner-cta-fondo: var(--azul);
+  --banner-cta-fondo-hover: var(--azul-oscuro);
+  --banner-decoracion: rgba(255, 255, 255, 0.18);
+}
