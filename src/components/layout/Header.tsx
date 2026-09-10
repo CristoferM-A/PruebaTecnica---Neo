@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BcpLogo, BcpIsotipo } from '@/components/ui/BcpLogo'
 import {
   IconoCandado,
   IconoCerrar,
   IconoChevron,
+  IconoChevronDerecha,
   IconoEstrella,
   IconoEstrellaSolida,
   IconoLupa,
@@ -15,7 +16,8 @@ import {
   IconoTarjetaMenu,
 } from '@/components/ui/Iconos'
 import { Cintillo } from './Cintillo'
-import { NAV_LINKS, SEGMENT_TABS } from '@/data/content'
+import { NAV_LINKS, SEGMENT_TABS, itemsDeNav } from '@/data/content'
+import type { NavCategory, NavItem, NavLink } from '@/data/content'
 
 const ICONOS_MENU = {
   tarjeta: IconoTarjetaMenu,
@@ -37,13 +39,163 @@ function BotonBuscar({ ancho = false }: { ancho?: boolean }) {
   )
 }
 
+function EnlacePanel({ item, onCerrar }: { item: NavItem; onCerrar: () => void }) {
+  return (
+    <li className={item.separado ? 'panel__fila panel__fila--separada' : 'panel__fila'}>
+      <a className="panel__enlace" href={item.href} onClick={onCerrar}>
+        {item.label}
+        {item.badge && <span className="panel__badge">{item.badge}</span>}
+      </a>
+    </li>
+  )
+}
+
+interface PanelMegaProps {
+  categorias: NavCategory[]
+  categoriaAbierta: string | null
+  onCategoria: (label: string) => void
+  onCerrar: () => void
+}
+
+function PanelMega({ categorias, categoriaAbierta, onCategoria, onCerrar }: PanelMegaProps) {
+  const activa = categorias.find((categoria) => categoria.label === categoriaAbierta)
+
+  return (
+    <div className={activa ? 'panel panel--mega panel--desplegado' : 'panel panel--mega'}>
+      <ul className="panel__categorias">
+        {categorias.map((categoria) => (
+          <li key={categoria.label}>
+            <button
+              type="button"
+              className={
+                categoria.label === categoriaAbierta
+                  ? 'panel__categoria panel__categoria--activa'
+                  : 'panel__categoria'
+              }
+              aria-expanded={categoria.label === categoriaAbierta}
+              onClick={() => onCategoria(categoria.label)}
+            >
+              <span>{categoria.label}</span>
+              <IconoChevronDerecha className="panel__categoria-flecha" />
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {activa && (
+        <div className="panel__detalle">
+          <ul className="panel__lista">
+            {activa.items.map((item) => (
+              <EnlacePanel key={item.label} item={item} onCerrar={onCerrar} />
+            ))}
+          </ul>
+
+          <aside className="panel__promo" data-tinte={activa.tinte}>
+            <p className="panel__promo-titulo">{activa.promoTitulo}</p>
+            <a className="panel__promo-cta" href={activa.href} onClick={onCerrar}>
+              {activa.promoCta}
+            </a>
+          </aside>
+        </div>
+      )}
+    </div>
+  )
+}
+
+interface NavegacionProps {
+  menuAbierto: string | null
+  categoriaAbierta: string | null
+  onMenu: (label: string) => void
+  onCategoria: (label: string) => void
+  onCerrar: () => void
+}
+
+function Navegacion({
+  menuAbierto,
+  categoriaAbierta,
+  onMenu,
+  onCategoria,
+  onCerrar,
+}: NavegacionProps) {
+  return (
+    <nav className="navegacion" aria-label="Navegación principal">
+      {NAV_LINKS.map((link: NavLink) => {
+        const abierto = menuAbierto === link.label
+        return (
+          <div className="navegacion__item" key={link.label}>
+            <button
+              type="button"
+              className={
+                abierto ? 'navegacion__boton navegacion__boton--activo' : 'navegacion__boton'
+              }
+              aria-expanded={abierto}
+              onClick={() => onMenu(link.label)}
+            >
+              {link.label}
+              <IconoChevron className="navegacion__flecha" />
+            </button>
+
+            {abierto &&
+              (link.tipo === 'mega' ? (
+                <PanelMega
+                  categorias={link.categorias}
+                  categoriaAbierta={categoriaAbierta}
+                  onCategoria={onCategoria}
+                  onCerrar={onCerrar}
+                />
+              ) : (
+                <div className="panel">
+                  <ul className="panel__lista">
+                    {link.items.map((item) => (
+                      <EnlacePanel key={item.label} item={item} onCerrar={onCerrar} />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
+        )
+      })}
+    </nav>
+  )
+}
+
 export function Header() {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [seccionAbierta, setSeccionAbierta] = useState<string | null>(null)
+  const [menuDesktop, setMenuDesktop] = useState<string | null>(null)
+  const [categoriaAbierta, setCategoriaAbierta] = useState<string | null>(null)
   const [quechua, setQuechua] = useState(false)
+  const cabeceraRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (!menuDesktop) return
+
+    const alPulsarFuera = (evento: MouseEvent) => {
+      if (!cabeceraRef.current?.contains(evento.target as Node)) setMenuDesktop(null)
+    }
+    const alPulsarTecla = (evento: KeyboardEvent) => {
+      if (evento.key === 'Escape') setMenuDesktop(null)
+    }
+
+    document.addEventListener('pointerdown', alPulsarFuera)
+    document.addEventListener('keydown', alPulsarTecla)
+    return () => {
+      document.removeEventListener('pointerdown', alPulsarFuera)
+      document.removeEventListener('keydown', alPulsarTecla)
+    }
+  }, [menuDesktop])
+
+  const alternarMenuDesktop = (label: string) => {
+    setMenuDesktop((actual) => (actual === label ? null : label))
+    setCategoriaAbierta(null)
+  }
+
+  const alternarCategoria = (label: string) => {
+    setCategoriaAbierta((actual) => (actual === label ? null : label))
+  }
 
   return (
-    <header className="cabecera">
+    <header className="cabecera" ref={cabeceraRef}>
       <Cintillo />
 
       <div className="cabecera__nivel1">
@@ -97,14 +249,13 @@ export function Header() {
             <BcpIsotipo className="cabecera__logo-isotipo" />
           </a>
 
-          <nav className="navegacion" aria-label="Navegación principal">
-            {NAV_LINKS.map((link) => (
-              <a key={link.label} className="navegacion__enlace" href={link.href}>
-                {link.label}
-                <IconoChevron className="navegacion__flecha" />
-              </a>
-            ))}
-          </nav>
+          <Navegacion
+            menuAbierto={menuDesktop}
+            categoriaAbierta={categoriaAbierta}
+            onMenu={alternarMenuDesktop}
+            onCategoria={alternarCategoria}
+            onCerrar={() => setMenuDesktop(null)}
+          />
 
           <div className="cabecera__acciones">
             <BotonBuscar />
@@ -190,10 +341,11 @@ export function Header() {
 
                   {abierta && (
                     <ul className="menu-movil__sublista">
-                      {link.items.map((item) => (
-                        <li key={item}>
-                          <a className="menu-movil__subenlace" href={link.href}>
-                            {item}
+                      {itemsDeNav(link).map((item) => (
+                        <li key={item.label}>
+                          <a className="menu-movil__subenlace" href={item.href}>
+                            {item.label}
+                            {item.badge && <span className="panel__badge">{item.badge}</span>}
                           </a>
                         </li>
                       ))}

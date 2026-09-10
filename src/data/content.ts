@@ -25,11 +25,32 @@ export const BANNER_VARIANTS: Record<Variant, BannerVariantContent> = {
   },
 }
 
-export interface NavLink {
+export interface NavItem {
+  label: string
+  href: string
+  badge?: string
+  separado?: boolean
+}
+
+export interface NavCategory extends NavItem {
+  tinte: number
+  promoTitulo: string
+  promoCta: string
+  items: NavItem[]
+}
+
+interface NavBase {
   label: string
   href: string
   icon: 'tarjeta' | 'movil' | 'estrella'
-  items: string[]
+}
+
+export type NavLink =
+  | (NavBase & { tipo: 'mega'; categorias: NavCategory[] })
+  | (NavBase & { tipo: 'simple'; items: NavItem[] })
+
+export function itemsDeNav(link: NavLink): NavItem[] {
+  return link.tipo === 'mega' ? link.categorias : link.items
 }
 
 export const NAV_LINKS: NavLink[] = [
@@ -37,25 +58,155 @@ export const NAV_LINKS: NavLink[] = [
     label: 'Productos',
     href: '#productos',
     icon: 'tarjeta',
-    items: ['Cuentas', 'Tarjetas de crédito', 'Créditos', 'Seguros', 'Inversiones'],
+    tipo: 'mega',
+    categorias: [
+      {
+        label: 'Cuentas',
+        href: '#cuentas',
+        tinte: 1,
+        promoTitulo: '¡Tus ahorros te premian todos los días!',
+        promoCta: 'Regístrate aquí',
+        items: [
+          { label: 'Cuenta Contigo: Retiro AFP', href: '#cuenta-contigo', badge: 'Nuevo' },
+          { label: 'Cuenta Digital', href: '#cuenta-digital' },
+          { label: 'Cuenta Premio', href: '#cuenta-premio' },
+          { label: 'Cuenta Sueldo', href: '#cuenta-sueldo' },
+          { label: 'Cuenta Ilimitada', href: '#cuenta-ilimitada' },
+          { label: 'Wardaditos', href: '#wardaditos' },
+          { label: 'Ver todos', href: '#cuentas-todas' },
+          { label: 'Cuenta CTS', href: '#cuenta-cts' },
+          { label: 'Sorteos y Promociones', href: '#sorteos', separado: true },
+        ],
+      },
+      {
+        label: 'Tarjetas',
+        href: '#tarjetas',
+        tinte: 2,
+        promoTitulo: 'Cuotas sin intereses en más de 3,000 comercios',
+        promoCta: 'Conoce más',
+        items: [
+          { label: 'Tarjeta de Crédito', href: '#solicitud' },
+          { label: 'Tarjeta de Débito', href: '#tarjeta-debito' },
+          { label: 'Tarjeta de Crédito iO', href: '#tarjeta-io' },
+          { label: 'Tarjeta LATAM Pass', href: '#tarjeta-latam' },
+          { label: 'Tarjeta American Express', href: '#tarjeta-amex' },
+          { label: 'Ver todas', href: '#tarjetas-todas' },
+        ],
+      },
+      {
+        label: 'Préstamos',
+        href: '#prestamos',
+        tinte: 3,
+        promoTitulo: 'Simula tu préstamo y recibe el dinero en minutos',
+        promoCta: 'Simula aquí',
+        items: [
+          { label: 'Préstamo Personal', href: '#prestamo-personal' },
+          { label: 'Préstamo con Garantía', href: '#prestamo-garantia' },
+          { label: 'Crédito Hipotecario', href: '#credito-hipotecario' },
+          { label: 'Crédito Vehicular', href: '#credito-vehicular' },
+          { label: 'Adelanto de Sueldo', href: '#adelanto-sueldo' },
+          { label: 'Ver todos', href: '#prestamos-todos' },
+        ],
+      },
+      {
+        label: 'Seguros',
+        href: '#seguros',
+        tinte: 4,
+        promoTitulo: 'Protege lo que más te importa desde S/ 15 al mes',
+        promoCta: 'Cotiza aquí',
+        items: [
+          { label: 'Seguro Vehicular', href: '#seguro-vehicular' },
+          { label: 'Seguro de Vida', href: '#seguro-vida' },
+          { label: 'Seguro de Hogar', href: '#seguro-hogar' },
+          { label: 'Seguro Oncológico', href: '#seguro-oncologico' },
+          { label: 'Seguro de Viaje', href: '#seguro-viaje' },
+          { label: 'Ver todos', href: '#seguros-todos' },
+        ],
+      },
+      {
+        label: 'Inversiones',
+        href: '#inversiones',
+        tinte: 5,
+        promoTitulo: 'Empieza a invertir desde S/ 100',
+        promoCta: 'Empieza hoy',
+        items: [
+          { label: 'Fondos Mutuos', href: '#fondos-mutuos' },
+          { label: 'Depósito a Plazo', href: '#deposito-plazo' },
+          { label: 'Cuenta a Plazo', href: '#cuenta-plazo' },
+          { label: 'Ahorro con Propósito', href: '#ahorro-proposito' },
+          { label: 'Ver todos', href: '#inversiones-todas' },
+        ],
+      },
+      {
+        label: 'Tipo de cambio',
+        href: '#tipo-de-cambio',
+        tinte: 6,
+        promoTitulo: 'Cambia tus dólares al mejor tipo de cambio',
+        promoCta: 'Cambia aquí',
+        items: [
+          { label: 'Cambio de moneda', href: '#cambio-moneda' },
+          { label: 'Tipo de cambio del día', href: '#cambio-dia' },
+          { label: 'Cambio programado', href: '#cambio-programado' },
+          { label: 'Ver detalle', href: '#cambio-detalle' },
+        ],
+      },
+      {
+        label: 'Servicios',
+        href: '#servicios',
+        tinte: 7,
+        promoTitulo: 'Paga tus servicios sin salir de casa',
+        promoCta: 'Ver servicios',
+        items: [
+          { label: 'Pago de servicios', href: '#pago-servicios' },
+          { label: 'Transferencias', href: '#transferencias' },
+          { label: 'Recargas', href: '#recargas' },
+          { label: 'Giros al exterior', href: '#giros' },
+          { label: 'Ubícanos', href: '#ubicanos' },
+          { label: 'Ver todos', href: '#servicios-todos' },
+        ],
+      },
+    ],
   },
   {
     label: 'Soluciones Digitales',
     href: '#soluciones-digitales',
     icon: 'movil',
-    items: ['Banca por Internet', 'App Banca Móvil', 'Yape', 'Pago de servicios'],
+    tipo: 'simple',
+    items: [
+      { label: 'Banca Móvil', href: '#banca-movil' },
+      { label: 'Banca por Internet', href: '#banca-por-internet' },
+      { label: 'Yape', href: '#yape' },
+      { label: 'Tarjeta de Crédito iO', href: '#tarjeta-io' },
+      { label: 'Pago Automático', href: '#pago-automatico' },
+      { label: 'Otras soluciones', href: '#otras-soluciones' },
+    ],
   },
   {
     label: 'Beneficios',
     href: '#beneficios',
     icon: 'estrella',
-    items: ['Promociones', 'Cuotas sin intereses', 'Millas LATAM Pass', 'Sorteos'],
+    tipo: 'simple',
+    items: [
+      { label: 'Programa de Lealtad Qore', href: '#qore', badge: 'Nuevo' },
+      { label: 'Mundo Cuenta Sueldo QORE', href: '#mundo-cuenta-sueldo' },
+      { label: 'Mundo Tarjetas de Crédito', href: '#mundo-tarjetas' },
+      { label: 'Cuotas Sin Intereses', href: '#cuotas-sin-intereses' },
+      { label: 'Mi Espacio BCP', href: '#mi-espacio' },
+    ],
   },
   {
     label: 'Ayuda y Educación',
     href: '#ayuda',
     icon: 'estrella',
-    items: ['Centro de ayuda', 'Preguntas frecuentes', 'ABC del BCP', 'Canales de atención'],
+    tipo: 'simple',
+    items: [
+      { label: 'Centro de Ayuda', href: '#centro-de-ayuda' },
+      { label: 'Cursos Virtuales ABC', href: '#cursos-abc' },
+      { label: 'Facilidades de Pago', href: '#facilidades-de-pago' },
+      { label: 'Alerta fraude', href: '#alerta-fraude' },
+      { label: 'Ubícanos', href: '#ubicanos' },
+      { label: 'Procesos pendientes', href: '#procesos-pendientes' },
+    ],
   },
 ]
 
